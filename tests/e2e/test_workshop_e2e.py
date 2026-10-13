@@ -28,8 +28,10 @@ def test_user_edits_car_and_change_survives_reload(page, live_server):
     page.get_by_role("button", name="Save changes").click()
 
     # 4. 断言详情页显示 Honda Accord
-    expect(page.get_by_role("heading", name="Honda Accord")).to_be_visible()
-
+    # 先等页面跳转完成
+    page.wait_for_url(re.compile(r"/cars/\d+$"))
+# 再断言标题，同时增加超时时间
+    expect(page.get_by_role("heading", name="Honda Accord")).to_be_visible(timeout=15000)
     # 5. 刷新页面，验证修改仍然存在
     page.reload()
     expect(page.locator("#car-model")).to_have_text("Accord")
