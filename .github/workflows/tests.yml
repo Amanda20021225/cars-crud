@@ -1,0 +1,44 @@
+name: Cars CRUD Tests
+
+# Hint A: 触发器配置为针对 main 分支的 PR
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Hint B: 下载代码和设置 Python 3.12
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Hint C: 安装项目依赖
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      # Hint D: 安装 Playwright Chromium 及其 Linux 系统依赖
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+
+      # Hint E: 分别运行四个测试组，命名为独立步骤
+      - name: Run unit tests
+        run: python -m pytest tests/unit -q
+
+      - name: Run integration tests
+        run: python -m pytest tests/integration -q
+
+      - name: Run API tests
+        run: python -m pytest tests/api -q
+
+      - name: Run E2E tests
+        run: python -m pytest tests/e2e -q
